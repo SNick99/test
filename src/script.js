@@ -1,161 +1,158 @@
-var scene = new THREE.Scene();
-//var camera = new THREE.PerspectiveCamera(75,window.innerWidth/window.innerHeight);
-var renderer = new THREE.WebGLRenderer({antialias: true});
+let scene = new THREE.Scene();
+let renderer = new THREE.WebGLRenderer({ antialias: true });
 
-var forCanvas = document.querySelector('.canv');
-
+let forCanvas = document.querySelector(".canv");
 
 renderer.setSize(forCanvas.offsetWidth, forCanvas.offsetHeight);
 
 forCanvas.appendChild(renderer.domElement);
 
+camera = new THREE.PerspectiveCamera(
+  75,
+  window.innerWidth / window.innerHeight
+);
 
-camera = new THREE.PerspectiveCamera( 75,window.innerWidth/window.innerHeight);
-				
-				// controls
-				controls = new THREE.OrbitControls( camera, renderer.domElement );
-				//controls.addEventListener( 'change', render ); // call this only in static scenes (i.e., if there is no animation loop)
-				controls.enableDamping = true; // an animation loop is required when either damping or auto-rotation are enabled
-				controls.dampingFactor = 0.25;
-				controls.screenSpacePanning = false;
-				controls.minDistance = 100;
-				controls.maxDistance = 500;
-        controls.maxPolarAngle = Math.PI / 2;
-        
+// controls
+// let controls = new THREE.OrbitControls(camera, renderer.domElement);
 
+// controls.enableDamping = true; // an animation loop is required when either damping or auto-rotation are enabled
+// controls.dampingFactor = 0.25;
+// controls.screenSpacePanning = false;
+// controls.minDistance = 100;
+// controls.maxDistance = 500;
+// controls.maxPolarAngle = Math.PI / 2;
 
-  var func = (obj) => {
-          var para = document.createElement("div");
-          
-          para.className = `del`;
-          para.setAttribute("id", obj.uuid);
-          var node = document.createTextNode(`(X) => ${obj.uuid}`);
-          para.appendChild(node);
-          list.appendChild(para);
-          let del=document.querySelector( '.del' );
-    
-          obj.name = obj.uuid;
-          
-          array.push(obj.uuid);
-          console.log(array);
-    
-          list.onclick = function(event) {
-            var target = event.target;
-    
-             if (target.className != 'del') {return;}
-              for(let i=0; i<array.length; i++){
-    
-                if(array[i]===target.id)
-            
-                  target.style.display = 'none';
-                  scene.remove(scene.getObjectByName(target.id));
-              }
-            
-            
-          };
-  }
+//For create object
+let func = obj => {
+  let para = document.createElement("div");
 
+  para.className = `del`;
+  para.setAttribute("id", obj.uuid);
+  let node = document.createTextNode(`(X) => ${obj.uuid}`);
+  para.appendChild(node);
+  list.appendChild(para);
+  let del = document.querySelector(".del");
 
+  obj.name = obj.uuid;
 
-var elem = document.querySelector('.btn_Create');
-var name = document.querySelector('#name');
-var scale= document.querySelector( '.scale' );
-var list= document.querySelector( '.list' );
-var array = [];
+  array.push(obj.uuid);
+  console.log(array);
 
+  list.onclick = event => {
+    let target = event.target;
 
-elem.onclick = function() {
+    if (target.className != "del") {
+      return;
+    }
+    for (let i = 0; i < array.length; i++) {
+      if (array[i] === target.id) target.style.display = "none";
+      scene.remove(scene.getObjectByName(target.id));
+    }
+  };
+};
+
+//for button create
+let elem = document.querySelector(".btn_Create");
+//get value from down-list (cube,pyramid...)
+let name = document.querySelector("#name");
+//get value scale
+let scale = document.querySelector(".scale");
+//list uuid of objects
+let list = document.querySelector(".list");
+//array for uuid
+let array = [];
+
+//for button Create
+elem.onclick = () => {
   switch (name.options[name.selectedIndex].value) {
-    case 'Cube':
-      var geometry = new THREE.BoxGeometry(1,1,1);
-      var material = new THREE.MeshBasicMaterial({color: 0xff0000});
-      var cube = new THREE.Mesh(geometry,material);
-      
-      cube.position.z = -10;
-      cube.scale.set(scale.value,scale.value,scale.value);
+    case "Cube":
+      let geometry = new THREE.BoxGeometry(1, 1, 1);
+      let material = new THREE.MeshBasicMaterial({ color: 0xff0000 });
+      let cube = new THREE.Mesh(geometry, material);
+
+      cube.position.z = -15;
+      cube.scale.set(scale.value, scale.value, scale.value);
       cube.position.x = Math.floor(Math.random() * 10);
-      cube.position.y = Math.floor(Math.random() * 10); 
+      cube.position.y = Math.floor(Math.random() * 10);
       cube.rotation.x = 0;
       cube.rotation.y = 0;
       scene.add(cube);
 
-    
+      renderer.render(scene, camera);
+      //create object
+      func(cube);
 
-
-      renderer.render(scene,camera);
-
-   
-
-    func(cube);
-     
-      
-
-      var animate = () => {
-      cube.rotation.x += 0.01;
-      renderer.render(scene,camera);
-      requestAnimationFrame(animate);
-      }
-      
-      animate();
-    break;
-    case 'Pyramid':
-     ////////////////////////////////////////
-     var radius = 4;
-     var height = 5;
-     
-
-     var geometry = new THREE.CylinderGeometry(0, radius, height, 4, 1)
-     var material = new THREE.MeshNormalMaterial();
-     var pyramid = new THREE.Mesh(geometry, material);
-     pyramid.position.z = -10;
-     pyramid.position.x = Math.floor(Math.random() * 10);
-     pyramid.position.y = Math.floor(Math.random() * 10); 
-     pyramid.scale.set(scale.value, scale.value, scale.value);
-     scene.add(pyramid);
-     
-     camera.position.z = 10;
-
-
-      func(pyramid);
-        
-
-     var render = function () {
-         requestAnimationFrame(render);
-         pyramid.rotation.x += 0.00;
-         pyramid.rotation.y += 0.01;
-
-         renderer.render(scene, camera);
-     };
-
-     render();
-
-    break;
-    case 'Scope':
-      
-    var geometry = new THREE.SphereGeometry(3, 50, 50, 0, Math.PI * 2, 0, Math.PI * 2);
-    var material = new THREE.MeshNormalMaterial();
-    var scope = new THREE.Mesh(geometry, material);
-    scope.position.z = -10;
-    scope.position.x = Math.floor(Math.random() * 10);
-    scope.position.y = Math.floor(Math.random() * 10); 
-    scope.scale.set(scale.value, scale.value, scale.value);
-    scene.add(scope);
-
-     func(scope)
-
-    camera.position.z = 10;
-    var render = function () {
-        requestAnimationFrame(render);
+      let animate = () => {
+        cube.rotation.x += 0.01;
         renderer.render(scene, camera);
-    };
+        requestAnimationFrame(animate);
+      };
 
-    render();
+      animate();
+      break;
+    case "Pyramid":
+      let radius = 4;
+      let height = 5;
+
+      let geometry1 = new THREE.CylinderGeometry(0, radius, height, 4, 1);
+      let material1 = new THREE.MeshNormalMaterial();
+      let pyramid = new THREE.Mesh(geometry1, material1);
+      pyramid.position.z = -15;
+      pyramid.position.x = Math.floor(Math.random() * 31) - 22;
+      pyramid.position.y = Math.floor(Math.random() * 31) - 22;
+      pyramid.scale.set(scale.value, scale.value, scale.value);
+      scene.add(pyramid);
+
+      camera.position.z = 10;
+      //create object
+      func(pyramid);
+
+      let render = () => {
+        requestAnimationFrame(render);
+        pyramid.rotation.x += 0.0;
+        pyramid.rotation.y += 0.01;
+
+        renderer.render(scene, camera);
+      };
+
+      renderer.render(scene, camera);
+
+      render();
+
+      break;
+    case "Scope":
+      let geometry2 = new THREE.SphereGeometry(
+        3,
+        50,
+        50,
+        0,
+        Math.PI * 2,
+        0,
+        Math.PI * 2
+      );
+      let material2 = new THREE.MeshNormalMaterial();
+      let scope = new THREE.Mesh(geometry2, material2);
+      scope.position.z = -15;
+      scope.position.x = Math.floor(Math.random() * 31) - 22;
+      scope.position.y = Math.floor(Math.random() * 31) - 22;
+      scope.scale.set(scale.value, scale.value, scale.value);
+      scene.add(scope);
+      //create object
+      func(scope);
+
+      let render1 = () => {
+        requestAnimationFrame(render1);
+        scope.rotation.x += 0.0;
+        scope.rotation.y += 0.01;
+
+        renderer.render1(scene, camera);
+      };
+
+      camera.position.z = 10;
+      render1();
 
       break;
     default:
-      alert( 'Я таких значений не знаю' );
+      alert("Я таких значений не знаю");
   }
-}
-
-
-
+};
