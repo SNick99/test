@@ -1,3 +1,4 @@
+import OrbitControls from "three-orbitcontrols";
 let scene = new THREE.Scene();
 let renderer = new THREE.WebGLRenderer({ antialias: true });
 
@@ -7,20 +8,16 @@ renderer.setSize(forCanvas.offsetWidth, forCanvas.offsetHeight);
 
 forCanvas.appendChild(renderer.domElement);
 
-camera = new THREE.PerspectiveCamera(
+let camera = new THREE.PerspectiveCamera(
   75,
   window.innerWidth / window.innerHeight
 );
 
-// controls
-// let controls = new THREE.OrbitControls(camera, renderer.domElement);
-
-// controls.enableDamping = true; // an animation loop is required when either damping or auto-rotation are enabled
-// controls.dampingFactor = 0.25;
-// controls.screenSpacePanning = false;
-// controls.minDistance = 100;
-// controls.maxDistance = 500;
-// controls.maxPolarAngle = Math.PI / 2;
+//OrbitControls
+const controls = new OrbitControls(camera, renderer.domElement);
+controls.enableDamping = true;
+controls.dampingFactor = 0.25;
+controls.enableZoom = false;
 
 //For create object
 let func = obj => {
@@ -64,95 +61,103 @@ let array = [];
 
 //for button Create
 elem.onclick = () => {
-  switch (name.options[name.selectedIndex].value) {
-    case "Cube":
-      let geometry = new THREE.BoxGeometry(1, 1, 1);
-      let material = new THREE.MeshBasicMaterial({ color: 0xff0000 });
-      let cube = new THREE.Mesh(geometry, material);
+  if (scale.value > 0 && scale.value < 11) {
+    switch (name.options[name.selectedIndex].value) {
+      case "Cube":
+        let geometry = new THREE.BoxGeometry(1, 1, 1);
+        let material = new THREE.MeshBasicMaterial({ color: 0xff0000 });
+        let cube = new THREE.Mesh(geometry, material);
 
-      cube.position.z = -15;
-      cube.scale.set(scale.value, scale.value, scale.value);
-      cube.position.x = Math.floor(Math.random() * 10);
-      cube.position.y = Math.floor(Math.random() * 10);
-      cube.rotation.x = 0;
-      cube.rotation.y = 0;
-      scene.add(cube);
-
-      renderer.render(scene, camera);
-      //create object
-      func(cube);
-
-      let animate = () => {
-        cube.rotation.x += 0.01;
+        cube.position.z = -15;
+        cube.scale.set(scale.value, scale.value, scale.value);
+        cube.position.x = Math.floor(Math.random() * 10);
+        cube.position.y = Math.floor(Math.random() * 10);
+        cube.rotation.x = 0;
+        cube.rotation.y = 0;
+        scene.add(cube);
         renderer.render(scene, camera);
-        requestAnimationFrame(animate);
-      };
+        //create object
+        func(cube);
 
-      animate();
-      break;
-    case "Pyramid":
-      let radius = 4;
-      let height = 5;
+        let render3 = () => {
+          requestAnimationFrame(render3);
+          cube.rotation.x += 0.0;
+          cube.rotation.y += 0.01;
 
-      let geometry1 = new THREE.CylinderGeometry(0, radius, height, 4, 1);
-      let material1 = new THREE.MeshNormalMaterial();
-      let pyramid = new THREE.Mesh(geometry1, material1);
-      pyramid.position.z = -15;
-      pyramid.position.x = Math.floor(Math.random() * 31) - 22;
-      pyramid.position.y = Math.floor(Math.random() * 31) - 22;
-      pyramid.scale.set(scale.value, scale.value, scale.value);
-      scene.add(pyramid);
+          renderer.render(scene, camera);
+        };
 
-      camera.position.z = 10;
-      //create object
-      func(pyramid);
+        render3();
 
-      let render = () => {
-        requestAnimationFrame(render);
-        pyramid.rotation.x += 0.0;
-        pyramid.rotation.y += 0.01;
+        break;
+      case "Pyramid":
+        let radius = 4;
+        let height = 5;
+
+        let geometry1 = new THREE.CylinderGeometry(0, radius, height, 4, 1);
+        let material1 = new THREE.MeshNormalMaterial();
+        let pyramid = new THREE.Mesh(geometry1, material1);
+        pyramid.position.z = -15;
+        pyramid.position.x = Math.floor(Math.random() * 31) - 22;
+        pyramid.position.y = Math.floor(Math.random() * 31) - 22;
+        pyramid.scale.set(scale.value, scale.value, scale.value);
+        scene.add(pyramid);
+
+        camera.position.z = 10;
+        //create object
+        func(pyramid);
+
+        let render = () => {
+          requestAnimationFrame(render);
+          pyramid.rotation.x += 0.0;
+          pyramid.rotation.y += 0.01;
+
+          renderer.render(scene, camera);
+        };
 
         renderer.render(scene, camera);
-      };
 
-      renderer.render(scene, camera);
+        render();
 
-      render();
+        break;
+      case "Scope":
+        let geometry2 = new THREE.SphereGeometry(
+          3,
+          50,
+          50,
+          0,
+          Math.PI * 2,
+          0,
+          Math.PI * 2
+        );
+        let material2 = new THREE.MeshNormalMaterial();
+        let scope = new THREE.Mesh(geometry2, material2);
+        scope.position.z = -15;
+        scope.position.x = Math.floor(Math.random() * 31) - 22;
+        scope.position.y = Math.floor(Math.random() * 31) - 22;
+        scope.scale.set(scale.value, scale.value, scale.value);
+        scene.add(scope);
+        //create object
+        func(scope);
 
-      break;
-    case "Scope":
-      let geometry2 = new THREE.SphereGeometry(
-        3,
-        50,
-        50,
-        0,
-        Math.PI * 2,
-        0,
-        Math.PI * 2
-      );
-      let material2 = new THREE.MeshNormalMaterial();
-      let scope = new THREE.Mesh(geometry2, material2);
-      scope.position.z = -15;
-      scope.position.x = Math.floor(Math.random() * 31) - 22;
-      scope.position.y = Math.floor(Math.random() * 31) - 22;
-      scope.scale.set(scale.value, scale.value, scale.value);
-      scene.add(scope);
-      //create object
-      func(scope);
+        renderer.render(scene, camera);
 
-      let render1 = () => {
-        requestAnimationFrame(render1);
-        scope.rotation.x += 0.0;
-        scope.rotation.y += 0.01;
+        let render1 = () => {
+          requestAnimationFrame(render1);
+          scope.rotation.x += 0.0;
+          scope.rotation.y += 0.01;
 
-        renderer.render1(scene, camera);
-      };
+          renderer.render1(scene, camera);
+        };
 
-      camera.position.z = 10;
-      render1();
+        camera.position.z = 10;
+        render1();
 
-      break;
-    default:
-      alert("Я таких значений не знаю");
+        break;
+      default:
+        alert("Я таких значений не знаю");
+    }
+  } else {
+    alert("Scale from 1 to 10");
   }
 };
