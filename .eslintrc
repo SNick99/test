@@ -1,0 +1,11 @@
+// {
+//     "extends": "eslint:recommended",
+//     "parser": "babel-eslint",
+//     "globals": {
+//         "console": true,
+//         "window": true
+//     },
+//     "rules": {
+//         "no-console": "off"
+//     }
+// }
