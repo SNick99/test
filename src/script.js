@@ -19,6 +19,13 @@ controls.enableDamping = true;
 controls.dampingFactor = 0.25;
 controls.enableZoom = false;
 
+// LIGHTS
+var light = new THREE.DirectionalLight(0xaabbff, 0.3);
+light.position.x = 300;
+light.position.y = 250;
+light.position.z = -500;
+scene.add(light);
+
 //For create object
 let func = obj => {
   let para = document.createElement("div");
@@ -75,7 +82,7 @@ elem.onclick = () => {
         cube.rotation.x = 0;
         cube.rotation.y = 0;
         scene.add(cube);
-        renderer.render(scene, camera);
+
         //create object
         func(cube);
 
@@ -86,7 +93,7 @@ elem.onclick = () => {
 
           renderer.render(scene, camera);
         };
-
+        renderer.render(scene, camera);
         render3();
 
         break;
